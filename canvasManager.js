@@ -5,6 +5,7 @@ class CanvasManager {
         this.lastX = 0;
         this.lastY = 0;
         this.isDrawing = false;
+        this.isWithinCanvas = true; // Track if the mouse is currently within the canvas
 
         this.undoStack = [];
         this.redoStack = [];
@@ -21,8 +22,9 @@ class CanvasManager {
 
     startDrawing(x, y) {
         this.isDrawing = true;
+        this.isWithinCanvas = true; // Reset when starting a new drawing action
         [this.lastX, this.lastY] = [x, y];
-        this.saveState(); // save the state when starting a new drawing action
+        this.saveState(); // Save the state when starting a new drawing action
     }
 
     stopDrawing() {
@@ -31,6 +33,20 @@ class CanvasManager {
 
     drawLine(x, y) {
         if (!this.isDrawing) return;
+
+        // If outside the canvas (with some padding), stop drawing action but keep the state active
+        const padding = -10;
+        if (x < padding || x > this.canvas.width - padding || y < padding || y > this.canvas.height - padding) {
+            this.isWithinCanvas = false;
+            return; 
+        }
+
+        // If re-entering the canvas and was outside, reset the last position without drawing
+        if (!this.isWithinCanvas) {
+            [this.lastX, this.lastY] = [x, y];
+            this.isWithinCanvas = true;
+            return; // avoids drawing a line from the previous position
+        }
 
         this.context.beginPath();
         this.context.moveTo(this.lastX, this.lastY);
@@ -45,7 +61,7 @@ class CanvasManager {
         // Save the current state of the canvas
         const imageData = this.context.getImageData(0, 0, this.canvas.width, this.canvas.height);
         this.undoStack.push(imageData);
-        this.redoStack = []; // clear the redo stack whenever a new action is performed
+        this.redoStack = []; // Clear the redo stack whenever a new action is performed
     }
 
     undo() {

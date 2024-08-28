@@ -10,12 +10,12 @@ class MouseTracker {
     }
 
     initMouseEvents() {
-        // Global mousemove to track movement outside canvas
+        // Track mouse movement globally to handle movements outside the canvas
         document.addEventListener('mousemove', (e) => this.updateMousePosition(e));
+        document.addEventListener('mouseup', () => this.handleMouseUp());
 
         // Canvas-specific mouse events
         this.canvas.addEventListener('mousedown', (e) => this.handleMouseDown(e));
-        document.addEventListener('mouseup', () => this.handleMouseUp());
         this.canvas.addEventListener('mouseleave', () => this.handleMouseLeave());
         this.canvas.addEventListener('mouseenter', (e) => this.handleMouseEnter(e));
     }
@@ -25,8 +25,8 @@ class MouseTracker {
         this.mouseX = event.clientX - left;
         this.mouseY = event.clientY - top;
 
-        // If we are drawing, update the drawing state with the current mouse position
-        if (this.isMouseDown && this.drawing) {
+        // Draw even outside the canvas as long as the mouse is pressed
+        if (this.isMouseDown) {
             this.onMoveCallback(this.mouseX, this.mouseY, this.drawing);
         }
     }
@@ -45,18 +45,18 @@ class MouseTracker {
     }
 
     handleMouseLeave() {
-        if (this.drawing && this.isMouseDown) {
-            // Pause drawing when mouse leaves but maintain state if mouse button is still pressed
-            this.drawing = false; // Temporarily pause drawing
+        // Keep drawing if the mouse button is still pressed
+        if (this.isMouseDown) {
+            this.drawing = true; // Continue drawing even outside the canvas
+        } else {
+            this.drawing = false; // Stop drawing if the mouse button is not pressed
         }
-        this.onMoveCallback(this.mouseX, this.mouseY, this.drawing);
     }
 
     handleMouseEnter(event) {
         this.updateMousePosition(event); // Update position immediately on enter
         if (this.isMouseDown) {
-            // If the mouse is down when re-entering, resume drawing
-            this.drawing = true;
+            this.drawing = true; // Resume drawing if the mouse button is still down
             this.onMoveCallback(this.mouseX, this.mouseY, this.drawing);
         }
     }

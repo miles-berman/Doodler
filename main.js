@@ -7,8 +7,10 @@ document.addEventListener('DOMContentLoaded', () => {
 
     // Create MouseTracker instance to handle mouse events
     const mouseTracker = new MouseTracker(canvasManager.canvas, (x, y, drawing) => {
+
         if (drawing) {
             if (!canvasManager.isDrawing) {
+                console.log('Start Drawing');
                 canvasManager.startDrawing(x, y);  // Start drawing if not already drawing
             } else {
                 canvasManager.drawLine(x, y);  // Continue drawing
