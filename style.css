@@ -1,0 +1,34 @@
+body {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    height: 100vh;
+    margin: 0;
+}
+
+h1 {
+    margin-bottom: 20px;
+}
+
+#drawCanvas {
+    border: 2px solid #000;
+    background-color: #fff;
+    cursor: crosshair;
+}
+
+#toolbar {
+    background-color: rgba(84, 190, 255, 0.613);
+    padding: 20px;
+    border-radius: 10px;
+}
+
+#toolbar button {
+    background-color: #ffffff;
+    color: rgb(12, 115, 179);
+    border: none;
+    padding: 10px 20px;
+    margin: 10px;
+    border-radius: 5px;
+    cursor: pointer;
+}
