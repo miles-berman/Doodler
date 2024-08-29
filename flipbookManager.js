@@ -48,7 +48,6 @@ export default class FlipbookManager {
 
     nextFrame() {
         if (this.frameIndex < this.frames.length - 1) {
-            // this.currFrame.saveCurrentState();
             this.currFrame.stopDrawing();
             this.frameIndex++;
             this.currFrame = this.frames[this.frameIndex];
@@ -61,7 +60,6 @@ export default class FlipbookManager {
 
     prevFrame() {
         if (this.frameIndex > 0) {
-            // this.currFrame.saveCurrentState();
             this.currFrame.stopDrawing();
             this.frameIndex--;
             this.currFrame = this.frames[this.frameIndex];
@@ -71,7 +69,6 @@ export default class FlipbookManager {
     }
 
     createNewFrame() {
-        // this.currFrame.saveCurrentState();
         const newFrameManager = new FrameManager(this.canvasElement.id);
         this.frames.push(newFrameManager);
         this.frameIndex++;

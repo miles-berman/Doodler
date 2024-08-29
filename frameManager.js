@@ -22,6 +22,9 @@ class FrameManager {
     }
 
     startDrawing(x, y) {
+        if (this.undoStack.length === 0) {
+            this.saveState(); // save the initial state
+        }
         this.isDrawing = true;
         this.withinCanvas = true; // Reset when starting a new drawing action
         [this.lastX, this.lastY] = [x, y];
@@ -29,6 +32,7 @@ class FrameManager {
 
     stopDrawing() {
         this.isDrawing = false;
+        this.saveState();
     }
 
     drawLine(x, y) {
@@ -55,7 +59,6 @@ class FrameManager {
         this.context.closePath();
 
         [this.lastX, this.lastY] = [x, y];
-        this.saveState(); 
     }
 
     saveState() {
@@ -69,18 +72,20 @@ class FrameManager {
         this.redoStack = []; // clear redo stack when a new state is saved
     }
 
+
     undo() {
         if (this.undoStack.length > 0) {
-            const imageData = this.undoStack.pop();
-            this.redoStack.push(this.context.getImageData(0, 0, this.canvas.width, this.canvas.height));
+            this.redoStack.push(this.undoStack.pop());
+            const imageData = this.undoStack[this.undoStack.length - 1];
             this.context.putImageData(imageData, 0, 0);
         }
     }
 
+
     redo() {
         if (this.redoStack.length > 0) {
-            const imageData = this.redoStack.pop();
-            this.undoStack.push(this.context.getImageData(0, 0, this.canvas.width, this.canvas.height));
+            this.undoStack.push(this.redoStack.pop());
+            const imageData = this.undoStack[this.undoStack.length - 1];
             this.context.putImageData(imageData, 0, 0);
         }
     }
