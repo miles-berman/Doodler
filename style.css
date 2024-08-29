@@ -51,6 +51,7 @@ h1 {
     background-color: rgba(84, 190, 255, 0.613);
     padding: 20px;
     border-radius: 10px;
+    width: 100vw;
 }
 
 #toolbar button {
