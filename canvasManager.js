@@ -35,7 +35,7 @@ class CanvasManager {
         if (!this.isDrawing) return;
 
         // If outside the canvas (with some padding), stop drawing action but keep the state active
-        const padding = -10;
+        const padding = -15;
         if (x < padding || x > this.canvas.width - padding || y < padding || y > this.canvas.height - padding) {
             this.isWithinCanvas = false;
             return; 
@@ -58,6 +58,10 @@ class CanvasManager {
     }
 
     saveState() {
+        const MAX_UNDO_STACK = 50;
+        if (this.undoStack.length >= MAX_UNDO_STACK) {
+            this.undoStack.shift(); // remove the oldest state if the stack is full
+        }
         // Save the current state of the canvas
         const imageData = this.context.getImageData(0, 0, this.canvas.width, this.canvas.height);
         this.undoStack.push(imageData);

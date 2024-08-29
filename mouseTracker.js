@@ -7,17 +7,27 @@ class MouseTracker {
         this.drawing = false; // Track if currently drawing
         this.isMouseDown = false; // Track if the mouse button is pressed
         this.initMouseEvents();
+
+        this.lastMoveTime = 0;
+        this.throttleRate = 16 // roughly 60 FPS
     }
 
     initMouseEvents() {
         // Track mouse movement globally to handle movements outside the canvas
-        document.addEventListener('mousemove', (e) => this.updateMousePosition(e));
+        document.addEventListener('mousemove', (e) => this.throttledUpdateMousePosition(e));
         document.addEventListener('mouseup', () => this.handleMouseUp());
 
         // Canvas-specific mouse events
         this.canvas.addEventListener('mousedown', (e) => this.handleMouseDown(e));
         this.canvas.addEventListener('mouseleave', () => this.handleMouseLeave());
         this.canvas.addEventListener('mouseenter', (e) => this.handleMouseEnter(e));
+    }
+
+    throttledUpdateMousePosition(event) {
+        const now = Date.now();
+        if (now - this.lastMoveTime < this.throttleRate) return; // Skip if within throttle rate
+        this.lastMoveTime = now;
+        this.updateMousePosition(event);
     }
 
     updateMousePosition(event) {
