@@ -62,11 +62,3 @@ h1 {
     border-radius: 5px;
     cursor: pointer;
 }
-
-/* limit the size of the toolbar on mobile */
-@media (max-width: 750px) {
-    #toolbar {
-        flex-direction: column;
-        gap: 10px;
-    }
-}

@@ -20,7 +20,6 @@ export default class FlipbookManager {
         this.onionPercent = 0.5;  // onion skin opacity
 
         this.initMouseTracker();  // init mouse tracker for drawing
-        this.initTouchListeners();  // init touch listeners
         this.initUI();  // init UI elements
     }
 
@@ -127,31 +126,6 @@ export default class FlipbookManager {
                 console.log('stop drawing');
             }
         });
-    }
-
-    // Initialize touch event listeners to prevent scrolling and enable drawing on mobile
-    initTouchListeners() {
-        this.canvasElement.addEventListener('touchstart', (e) => this.handleTouch(e));
-        this.canvasElement.addEventListener('touchmove', (e) => this.handleTouch(e));
-        this.canvasElement.addEventListener('touchend', (e) => this.handleTouch(e));
-        this.canvasElement.addEventListener('touchcancel', (e) => this.handleTouch(e));
-    }
-
-    // Handle touch events and prevent default behavior
-    handleTouch(event) {
-        event.preventDefault();  // Prevent scrolling
-        const touch = event.touches[0] || event.changedTouches[0];  // Get the first touch point
-        const rect = this.canvasElement.getBoundingClientRect();
-        const x = touch.clientX - rect.left;
-        const y = touch.clientY - rect.top;
-
-        if (event.type === 'touchstart') {
-            this.mouseTracker.onMouseDown({ offsetX: x, offsetY: y });
-        } else if (event.type === 'touchmove') {
-            this.mouseTracker.onMouseMove({ offsetX: x, offsetY: y });
-        } else if (event.type === 'touchend' || event.type === 'touchcancel') {
-            this.mouseTracker.onMouseUp();
-        }
     }
 
     drawOnionSkin() {
