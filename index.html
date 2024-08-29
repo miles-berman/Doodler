@@ -14,8 +14,10 @@
 
     <!-- canvas for drawing -->
     <h1>Doodler</h1>
-    <canvas id="drawCanvas" width="800" height="600"></canvas>
-    <!-- <canvas id="onionCanvas" width="800" height="600"></canvas> -->
+    <div id="canvasContainer">
+        <canvas id="drawCanvas" width="800" height="600" style="position: absolute; z-index: 1;"></canvas>
+        <canvas id="onionSkinCanvas" width="800" height="600" style="position: absolute; z-index: 3; pointer-events: none;"></canvas>
+    </div>
 
     <!-- toolbar -->
     <div id="toolbar">

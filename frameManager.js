@@ -11,6 +11,8 @@ class FrameManager {
         this.undoStack = [];
         this.redoStack = [];
 
+        this.onionSkinEnabled = true; // Flag for onion skinning
+
         this.setupCanvas();
     }
 
@@ -35,6 +37,7 @@ class FrameManager {
         this.saveState();
     }
 
+    // main drawing callback (currently just a pen tool)
     drawLine(x, y) {
         if (!this.isDrawing) return;
 
@@ -74,7 +77,7 @@ class FrameManager {
 
 
     undo() {
-        if (this.undoStack.length > 0) {
+        if (this.undoStack.length > 1) {
             this.redoStack.push(this.undoStack.pop());
             const imageData = this.undoStack[this.undoStack.length - 1];
             this.context.putImageData(imageData, 0, 0);
@@ -94,7 +97,7 @@ class FrameManager {
         this.context.clearRect(0, 0, this.canvas.width, this.canvas.height);
     }
 
-    restoreCurrentState() {
+    restoreCurrentState(previousState=null) {
         if (this.undoStack.length > 0) {
             const imageData = this.undoStack[this.undoStack.length - 1]; // get the latest saved state
             this.context.putImageData(imageData, 0, 0);
@@ -106,7 +109,6 @@ class FrameManager {
     getCurrentState() {
         return this.undoStack.length > 0 ? this.undoStack[this.undoStack.length - 1] : null;
     }
-
 }
 
 export default FrameManager;

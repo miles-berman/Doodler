@@ -3,8 +3,22 @@ import AnimationManager from './animationManager.js';
 import PlaybackManager from "./playBackManager.js";
 
 document.addEventListener('DOMContentLoaded', () => {
+    const drawCanvas = document.getElementById('drawCanvas');
+    drawCanvas.width = 800;
+    drawCanvas.height = 600;
+    
+    const onionSkinCanvas = document.getElementById('onionSkinCanvas');
+    onionSkinCanvas.width = 800;
+    onionSkinCanvas.height = 600;
+
+    // make sure both canvases center on the same position
+    const canvasContainer = document.getElementById('canvasContainer');
+    canvasContainer.style.width = `${drawCanvas.width}px`;
+    canvasContainer.style.height = `${drawCanvas.height}px`;
+
+
     let playing = false;
-    const flipbookManager = new FlipbookManager('drawCanvas');
+    const flipbookManager = new FlipbookManager('drawCanvas', 'onionSkinCanvas');
     const playbackManager = new PlaybackManager(flipbookManager);
 
     // main animation callback
@@ -37,6 +51,7 @@ document.addEventListener('DOMContentLoaded', () => {
         // space bar
         if (event.key === ' ') {
             playing = !playing;
+            flipbookManager.stop();
         }
 
         const isUndo = (event.ctrlKey || event.metaKey) && event.key === 'z';

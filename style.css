@@ -15,8 +15,18 @@ h1 {
     border: 2px solid #000;
     background-color: #fff;
     cursor: crosshair;
+    position: absolute;
 }
 
+#canvasContainer {
+    position: relative; 
+    width: 800px; 
+    height: 600px; 
+    margin-bottom: 20px; 
+    display: flex; 
+    justify-content: center;
+    align-items: center;
+}
 
 #toolbar {
     background-color: rgba(84, 190, 255, 0.613);
