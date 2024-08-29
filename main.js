@@ -7,14 +7,15 @@ document.addEventListener('DOMContentLoaded', () => {
     const flipbookManager = new FlipbookManager('drawCanvas');
     const playbackManager = new PlaybackManager(flipbookManager);
 
+    // main animation callback
     const animationManager = new AnimationManager(() => {
         if (playing) {
             playbackManager.playNextFrame();
-            animationManager.setTickRate(1000 / 10);
+            animationManager.setTickRate(1000 / 10); // 10 fps for flipbook playback
         }
         else if (flipbookManager.currFrame.isDrawing) {
             flipbookManager.currFrame.drawLine(flipbookManager.mouseTracker.mouseX, flipbookManager.mouseTracker.mouseY);
-            animationManager.setTickRate(1000 / 60);
+            animationManager.setTickRate(1000 / 60); // 60 fps for drawing
         }
     });
 

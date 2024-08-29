@@ -3,21 +3,18 @@ class PlaybackManager {
         this.flipbookManager = flipbookManager;
     }
 
-    // Play the next frame in the sequence
+    // next frame playback
     playNextFrame() {
-        this.flipbookManager.currFrame.saveCurrentState();  
-        this.flipbookManager.currFrame.stopDrawing();  // Stop drawing on the current frame
+        this.flipbookManager.currFrame.stopDrawing();  // in case the user is drawing
 
-        this.flipbookManager.frameIndex++;  // Increment frame index
+        this.flipbookManager.frameIndex++;
 
-        // If the frame index exceeds the number of frames, reset it to 0
+        // loop back
         if (this.flipbookManager.frameIndex >= this.flipbookManager.frames.length) {
             this.flipbookManager.frameIndex = 0;
         }
 
-        console.log(this.flipbookManager.frameIndex);  // Debugging statement
-
-        // Update the current frame and restore its state
+        // set current frame & restore state
         this.flipbookManager.currFrame = this.flipbookManager.frames[this.flipbookManager.frameIndex];
         this.flipbookManager.currFrame.restoreCurrentState();
         this.flipbookManager.updateFrameText();  // Update the frame text

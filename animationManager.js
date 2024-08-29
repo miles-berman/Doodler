@@ -2,13 +2,12 @@ class AnimationManager {
     constructor(callback) {
         this.callback = callback;  // callback (draw or update)
         this.requestId = null;  
-        this.tickRate = 1000 / 60; // (60 FPS)
+        this.tickRate = 1000 / 60; // (60 FPS default)
         this.lastFrameTime = 0; 
         this.running = false;
     }
 
-    startAnimation(tickRate = 1000 / 60) {  // default 60 FPS
-        this.tickRate = tickRate;
+    startAnimation() {
         if (!this.running) {
             this.running = true;
             this.lastFrameTime = performance.now(); 

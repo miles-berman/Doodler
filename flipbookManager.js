@@ -6,41 +6,49 @@ export default class FlipbookManager {
         this.canvasElement = document.getElementById(canvasId);
         this.context = this.canvasElement.getContext('2d', { willReadFrequently: true });
 
-        this.frames = [];  // Holds all frames
+        this.frames = [];  // holds all frames
         this.frameIndex = 0;
 
-        this.initFrames();  // Initialize the first frame
+        this.initFrames();  // 1st frame initialization
 
-        this.text = document.createElement('p');  // Text for frame index
+        this.text = document.createElement('p');  // text for frame index
         this.updateFrameText();
         document.body.appendChild(this.text);
 
-        this.initMouseTracker();  // Initialize mouse tracker for drawing
+        this.initMouseTracker();  // init mouse tracker for drawing
     }
 
+    // init 1st frame
     initFrames() {
         const initialFrameManager = new FrameManager(this.canvasElement.id);
         this.frames.push(initialFrameManager);
         this.currFrame = this.frames[this.frameIndex];
     }
 
+    // mouse tracking callback
     initMouseTracker() {
         this.mouseTracker = new MouseTracker(this.canvasElement, (x, y, drawing) => {
             if (drawing) {
                 if (!this.currFrame.isDrawing) {
                     this.currFrame.startDrawing(x, y);
+                    console.log('start drawing');
                 } else {
                     this.currFrame.drawLine(x, y);
                 }
             } else {
                 this.currFrame.stopDrawing();
+                console.log('stop drawing');
             }
         });
     }
 
+
+
+    // frame navigation
+
     nextFrame() {
         if (this.frameIndex < this.frames.length - 1) {
-            this.currFrame.saveCurrentState();
+            // this.currFrame.saveCurrentState();
             this.currFrame.stopDrawing();
             this.frameIndex++;
             this.currFrame = this.frames[this.frameIndex];
@@ -53,7 +61,7 @@ export default class FlipbookManager {
 
     prevFrame() {
         if (this.frameIndex > 0) {
-            this.currFrame.saveCurrentState();
+            // this.currFrame.saveCurrentState();
             this.currFrame.stopDrawing();
             this.frameIndex--;
             this.currFrame = this.frames[this.frameIndex];
@@ -63,7 +71,7 @@ export default class FlipbookManager {
     }
 
     createNewFrame() {
-        this.currFrame.saveCurrentState();
+        // this.currFrame.saveCurrentState();
         const newFrameManager = new FrameManager(this.canvasElement.id);
         this.frames.push(newFrameManager);
         this.frameIndex++;
