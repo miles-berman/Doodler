@@ -9,7 +9,7 @@ class MouseTracker {
         this.initMouseEvents();
 
         this.lastMoveTime = 0;
-        this.throttleRate = 16 // roughly 60 FPS
+        this.throttleRate = 8 // roughly 60 FPS
     }
 
     initMouseEvents() {

@@ -1,6 +1,5 @@
 import MouseTracker from './mouseTracker.js';
 import FrameManager from './frameManager.js';
-import AnimationManager from './animationManager.js';
 
 export default class FlipbookManager {
     constructor(canvasId) {
@@ -17,7 +16,6 @@ export default class FlipbookManager {
         document.body.appendChild(this.text);
 
         this.initMouseTracker();  // Initialize mouse tracker for drawing
-        this.initAnimationLoop();  // Start the animation loop
     }
 
     initFrames() {
@@ -38,16 +36,6 @@ export default class FlipbookManager {
                 this.currFrame.stopDrawing();
             }
         });
-    }
-
-    initAnimationLoop() {
-        this.animationManager = new AnimationManager(() => {
-            if (this.currFrame.isDrawing) {
-                this.currFrame.drawLine(this.mouseTracker.mouseX, this.mouseTracker.mouseY);
-            }
-        });
-
-        this.animationManager.startAnimation();
     }
 
     nextFrame() {
