@@ -1,4 +1,4 @@
-class CanvasManager {
+class FrameManager {
     constructor(canvasId) {
         this.canvas = document.getElementById(canvasId);
         this.context = this.canvas.getContext('2d', { willReadFrequently: true }); // get context & enable frequent reads
@@ -62,7 +62,7 @@ class CanvasManager {
         if (this.undoStack.length >= MAX_UNDO_STACK) {
             this.undoStack.shift(); // remove the oldest state if the stack is full
         }
-        // Save the current state of the canvas
+        // Save the current state of the frame
         const imageData = this.context.getImageData(0, 0, this.canvas.width, this.canvas.height);
         this.undoStack.push(imageData);
         this.redoStack = []; // Clear the redo stack whenever a new action is performed
@@ -87,6 +87,24 @@ class CanvasManager {
     clearCanvas() {
         this.context.clearRect(0, 0, this.canvas.width, this.canvas.height);
     }
+
+    saveCurrentState() {
+        this.saveState();
+    }
+
+    restoreCurrentState() {
+        if (this.undoStack.length > 0) {
+            const imageData = this.undoStack[this.undoStack.length - 1]; // Get the latest saved state
+            this.context.putImageData(imageData, 0, 0);
+        } else {
+            this.clearCanvas(); // If no states saved, clear the canvas
+        }
+    }
+
+    getCurrentState() {
+        return this.undoStack.length > 0 ? this.undoStack[this.undoStack.length - 1] : null;
+    }
+
 }
 
-export default CanvasManager;
+export default FrameManager;
