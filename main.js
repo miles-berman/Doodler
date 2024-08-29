@@ -4,12 +4,23 @@ import PlaybackManager from "./playBackManager.js";
 
 document.addEventListener('DOMContentLoaded', () => {
     const drawCanvas = document.getElementById('drawCanvas');
-    drawCanvas.width = 800;
-    drawCanvas.height = 600;
     
     const onionSkinCanvas = document.getElementById('onionSkinCanvas');
-    onionSkinCanvas.width = 800;
-    onionSkinCanvas.height = 600;
+
+    // if on mobile, make smaller
+    if (window.innerWidth < 800) {
+        drawCanvas.width = 300;
+        drawCanvas.height = 300;
+        onionSkinCanvas.width = 300;
+        onionSkinCanvas.height = 300
+    }
+    else {
+        drawCanvas.width = 800;
+        drawCanvas.height = 600;
+        onionSkinCanvas.width = 800;
+        onionSkinCanvas.height = 600;
+    }
+    
 
     // make sure both canvases center on the same position
     const canvasContainer = document.getElementById('canvasContainer');
