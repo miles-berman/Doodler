@@ -20,6 +20,8 @@ export default class FlipbookManager {
         this.updateFrameText();
         document.body.appendChild(this.text);
 
+        this.onionPercent = 0.5;  // onion skin opacity
+
         this.initMouseTracker();  // init mouse tracker for drawing
     }
 
@@ -48,15 +50,14 @@ export default class FlipbookManager {
     }
 
     drawOnionSkin() {
-        this.onionContext.clearRect(0, 0, this.onionCanvasElement.width, this.onionCanvasElement.height); // Clear onion skin canvas
+        this.onionContext.clearRect(0, 0, this.onionCanvasElement.width, this.onionCanvasElement.height); // clear onion skin canvas
         if (this.frameIndex > 0) {
-            const prevFrame = this.frames[this.frameIndex - 1];  // Get the previous frame
-            const prevImageData = prevFrame.getCurrentState();  // Get the image data of the previous frame
-
-            if (prevImageData) {  // Check if there is previous frame data
+            const prevFrame = this.frames[this.frameIndex - 1];  // previous frame
+            const prevImageData = prevFrame.getCurrentState();  // previous frame data
+            if (prevImageData) { 
                 this.onionContext.save();
-                this.onionCanvasElement.style.opacity = 0.5;  // Set the opacity of the onion skin canvas
-                this.onionContext.putImageData(prevImageData, 0, 0);  // Draw the previous frame on the onion skin canvas
+                this.onionCanvasElement.style.opacity = this.onionPercent;  // set onion skin opacity
+                this.onionContext.putImageData(prevImageData, 0, 0);  // draw previous frame
                 this.onionContext.restore();
             }
         }
