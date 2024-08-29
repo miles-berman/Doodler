@@ -28,7 +28,26 @@ h1 {
     align-items: center;
 }
 
+#infobar {
+    display: flex;
+    margin-bottom: 30px;
+}
+
+#infobar button {
+    background-color: #e1e1e188;
+    color: rgb(96, 96, 96);
+    border: none;
+    padding: 10px 20px;
+    margin: 10px;
+    border-radius: 5px;
+    cursor: pointer;
+}
+
 #toolbar {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    gap: 20px;
     background-color: rgba(84, 190, 255, 0.613);
     padding: 20px;
     border-radius: 10px;

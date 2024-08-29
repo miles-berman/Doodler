@@ -16,13 +16,92 @@ export default class FlipbookManager {
 
         this.initFrames();  // 1st frame initialization
 
-        this.text = document.createElement('p');  // text for frame index
-        this.updateFrameText();
-        document.body.appendChild(this.text);
-
+        this.showOnionSkin = true;  // onion skinning toggle
         this.onionPercent = 0.5;  // onion skin opacity
 
         this.initMouseTracker();  // init mouse tracker for drawing
+        this.initUI();  // init UI elements
+    }
+
+    initUI() {
+        // left arrow button
+        const prevButton = document.createElement('button');
+        prevButton.innerText = '<';
+        prevButton.addEventListener('click', () => {
+            this.prevFrame();
+        });
+
+        // right arrow button
+        const nextButton = document.createElement('button');
+        nextButton.innerText = '>';
+        nextButton.addEventListener('click', () => {
+            this.nextFrame();
+        });
+
+        const infobar = document.getElementById('infobar');
+        this.text = document.createElement('p');  // text for frame index
+        this.updateFrameText();
+
+        infobar.appendChild(prevButton);
+        infobar.appendChild(this.text);
+        infobar.appendChild(nextButton);
+
+        const toolbar = document.getElementById('toolbar');
+
+        // Color picker
+        const colorPicker = document.createElement('input');
+        colorPicker.type = 'color';
+        colorPicker.value = this.frames[this.frameIndex].color;
+        colorPicker.addEventListener('input', (event) => {
+            const color = event.target.value;
+            this.frames[this.frameIndex].setColor(color);
+        });
+        toolbar.appendChild(colorPicker);
+
+
+        // Line width picker
+        const lineWidthText = document.createElement('p');
+        lineWidthText.innerText = 'Line Width';
+        toolbar.appendChild(lineWidthText);
+
+        const lineWidthPicker = document.createElement('input');
+        lineWidthPicker.type = 'range';
+        lineWidthPicker.min = 1;
+        lineWidthPicker.max = 50;
+        lineWidthPicker.value = this.frames[this.frameIndex].lineWidth;
+        lineWidthPicker.addEventListener('input', (event) => {
+            const width = event.target.value;
+            this.frames[this.frameIndex].setLineWidth(width);
+        });
+        toolbar.appendChild(lineWidthPicker);
+
+        // onion skinning slider
+        const onionText = document.createElement('p');
+        onionText.innerText = 'Onion Skin';
+        toolbar.appendChild(onionText);
+
+        const onionSlider = document.createElement('input');
+        onionSlider.type = 'range';
+        onionSlider.min = 0;
+        onionSlider.max = 1;
+        onionSlider.step = 0.1;
+        onionSlider.value = this.onionPercent;
+        onionSlider.addEventListener('input', (event) => {
+            this.onionPercent = event.target.value;
+            this.drawOnionSkin();
+        });
+        toolbar.appendChild(onionSlider);
+
+        // onion skinning checkbox
+        const onionCheckbox = document.createElement('input');
+        onionCheckbox.type = 'checkbox';
+        onionCheckbox.checked = this.showOnionSkin;
+        onionCheckbox.addEventListener('change', (event) => {
+            this.showOnionSkin = event.target.checked;
+            this.drawOnionSkin();
+        });
+        toolbar.appendChild(onionCheckbox);
+        
     }
 
     // init 1st frame
@@ -51,6 +130,7 @@ export default class FlipbookManager {
 
     drawOnionSkin() {
         this.onionContext.clearRect(0, 0, this.onionCanvasElement.width, this.onionCanvasElement.height); // clear onion skin canvas
+        if (!this.showOnionSkin) return;  // return if onion skinning is off
         if (this.frameIndex > 0) {
             const prevFrame = this.frames[this.frameIndex - 1];  // previous frame
             const prevImageData = prevFrame.getCurrentState();  // previous frame data

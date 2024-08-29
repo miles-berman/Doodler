@@ -11,16 +11,17 @@ class FrameManager {
         this.undoStack = [];
         this.redoStack = [];
 
-        this.onionSkinEnabled = true; // Flag for onion skinning
+        this.color = '#000';
+        this.lineWidth = 8;
 
         this.setupCanvas();
     }
 
     setupCanvas() {
-        this.context.lineWidth = 8;
+        this.context.lineWidth = this.lineWidth;
         this.context.lineJoin = 'round';
         this.context.lineCap = 'round';
-        this.context.strokeStyle = '#000';
+        this.context.strokeStyle = this.color;
     }
 
     startDrawing(x, y) {
@@ -108,6 +109,17 @@ class FrameManager {
 
     getCurrentState() {
         return this.undoStack.length > 0 ? this.undoStack[this.undoStack.length - 1] : null;
+    }
+
+    setColor(color) {
+        console.log('setting color');
+        this.color = color;
+        this.context.strokeStyle = this.color;
+    }
+
+    setLineWidth(width) {
+        this.lineWidth = width;
+        this.context.lineWidth = this.lineWidth;
     }
 }
 
