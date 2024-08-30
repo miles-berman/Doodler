@@ -4,22 +4,7 @@ import PlaybackManager from "./playBackManager.js";
 
 document.addEventListener('DOMContentLoaded', () => {
     const drawCanvas = document.getElementById('drawCanvas');
-    
     const onionSkinCanvas = document.getElementById('onionSkinCanvas');
-
-    // if on mobile, make smaller
-    if (window.innerWidth < 800) {
-        drawCanvas.width = 300;
-        drawCanvas.height = 300;
-        onionSkinCanvas.width = 300;
-        onionSkinCanvas.height = 300
-    }
-    else {
-        drawCanvas.width = 800;
-        drawCanvas.height = 600;
-        onionSkinCanvas.width = 800;
-        onionSkinCanvas.height = 600;
-    }
     
 
     // make sure both canvases center on the same position
@@ -39,7 +24,7 @@ document.addEventListener('DOMContentLoaded', () => {
             animationManager.setTickRate(1000 / 10); // 10 fps for flipbook playback
         }
         else if (flipbookManager.currFrame.isDrawing) {
-            flipbookManager.currFrame.drawLine(flipbookManager.mouseTracker.mouseX, flipbookManager.mouseTracker.mouseY);
+            // draw while paused
             animationManager.setTickRate(1000 / 60); // 60 fps for drawing
         }
     });

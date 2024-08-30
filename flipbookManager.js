@@ -13,12 +13,15 @@ export default class FlipbookManager {
 
         this.frames = [];  // holds all frames
         this.frameIndex = 0;
+        this.currFrame = null;
 
-        this.initFrames();  // 1st frame initialization
+        this.color = '#000';  // default color
+        this.lineWidth = 8;  // default line width
 
         this.showOnionSkin = true;  // onion skinning toggle
         this.onionPercent = 0.5;  // onion skin opacity
 
+        this.initFrames();  // 1st frame initialization
         this.initMouseTracker();  // init mouse tracker for drawing
         this.initUI();  // init UI elements
     }
@@ -48,18 +51,18 @@ export default class FlipbookManager {
 
         const toolbar = document.getElementById('toolbar');
 
-        // Color picker
+        // color picker
         const colorPicker = document.createElement('input');
         colorPicker.type = 'color';
-        colorPicker.value = this.frames[this.frameIndex].color;
+        colorPicker.value = this.color;
         colorPicker.addEventListener('input', (event) => {
-            const color = event.target.value;
-            this.frames[this.frameIndex].setColor(color);
+            this.color = event.target.value;
+            this.currFrame.setColor(this.color);
         });
         toolbar.appendChild(colorPicker);
 
 
-        // Line width picker
+        // line width picker
         const lineWidthText = document.createElement('p');
         lineWidthText.innerText = 'Line Width';
         toolbar.appendChild(lineWidthText);
@@ -68,10 +71,10 @@ export default class FlipbookManager {
         lineWidthPicker.type = 'range';
         lineWidthPicker.min = 1;
         lineWidthPicker.max = 50;
-        lineWidthPicker.value = this.frames[this.frameIndex].lineWidth;
+        lineWidthPicker.value = this.lineWidth;
         lineWidthPicker.addEventListener('input', (event) => {
-            const width = event.target.value;
-            this.frames[this.frameIndex].setLineWidth(width);
+            this.lineWidth = event.target.value;
+            this.currFrame.setLineWidth(this.lineWidth);
         });
         toolbar.appendChild(lineWidthPicker);
 
@@ -101,6 +104,16 @@ export default class FlipbookManager {
             this.drawOnionSkin();
         });
         toolbar.appendChild(onionCheckbox);
+
+        // tools (pen, eraser, etc.)
+        for (const key in this.currFrame.tools) {
+            const button = document.createElement('button');
+            button.innerText = key;
+            button.addEventListener('click', () => {
+                this.currFrame.setTool(key);
+            });
+            toolbar.appendChild(button);
+        }
         
     }
 
@@ -109,6 +122,9 @@ export default class FlipbookManager {
         const initialFrameManager = new FrameManager(this.canvasElement.id);
         this.frames.push(initialFrameManager);
         this.currFrame = this.frames[this.frameIndex];
+        // set default color & line width
+        this.currFrame.setColor(this.color);
+        this.currFrame.setLineWidth(this.lineWidth);
     }
 
     // mouse tracking callback
@@ -119,7 +135,7 @@ export default class FlipbookManager {
                     this.currFrame.startDrawing(x, y);
                     console.log('start drawing');
                 } else {
-                    this.currFrame.drawLine(x, y);
+                    this.currFrame.draw(x, y);
                 }
             } else {
                 this.currFrame.stopDrawing();
@@ -144,11 +160,8 @@ export default class FlipbookManager {
     }
 
 
-
     // frame navigation
-
     nextFrame() {
-        const oldFrame = this.currFrame;
         if (this.frameIndex < this.frames.length - 1) {
             this.frameIndex++;
             this.currFrame = this.frames[this.frameIndex];
@@ -156,7 +169,8 @@ export default class FlipbookManager {
         else {
             this.createNewFrame();
         }
-        this.currFrame.restoreCurrentState(oldFrame);
+        // restore state and set color & line width
+        this.currFrame.restoreCurrentState(this.lineWidth, this.color);
         this.updateFrameText();
         this.drawOnionSkin();
     }
@@ -165,10 +179,11 @@ export default class FlipbookManager {
         if (this.frameIndex > 0) {
             this.frameIndex--;
             this.currFrame = this.frames[this.frameIndex];
-            this.currFrame.restoreCurrentState();
+            // restore state and set color & line width
+            this.currFrame.restoreCurrentState(this.lineWidth, this.color);
+            this.updateFrameText();
+            this.drawOnionSkin();
         }
-        this.updateFrameText();
-        this.drawOnionSkin();
     }
 
     createNewFrame() {
@@ -176,7 +191,6 @@ export default class FlipbookManager {
         this.frames.push(newFrameManager);
         this.frameIndex++;
         this.currFrame = this.frames[this.frameIndex];
-        this.currFrame.clearCanvas();
     }
 
     updateFrameText() {
