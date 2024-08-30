@@ -1,10 +1,11 @@
-body {
+html, body {
     display: flex;
     flex-direction: column;
     align-items: center;
     justify-content: center;
     height: 100vh;
     margin: 0;
+    background-color: transparent !important;
 }
 
 h1 {
@@ -13,9 +14,9 @@ h1 {
 
 #drawCanvas {
     border: 2px solid #000;
-    background-color: #fff;
     cursor: crosshair;
     position: absolute;
+    background-color: transparent !important;
 }
 
 #canvasContainer {
@@ -26,6 +27,11 @@ h1 {
     display: flex; 
     justify-content: center;
     align-items: center;
+    background-color: transparent !important;
+}
+
+canvas {
+    background-color: transparent !important;
 }
 
 #infobar {

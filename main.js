@@ -5,16 +5,11 @@ import PlaybackManager from "./playBackManager.js";
 document.addEventListener('DOMContentLoaded', () => {
     const drawCanvas = document.getElementById('drawCanvas');
     const onionSkinCanvas = document.getElementById('onionSkinCanvas');
-    
-
-    // make sure both canvases center on the same position
-    const canvasContainer = document.getElementById('canvasContainer');
-    canvasContainer.style.width = `${drawCanvas.width}px`;
-    canvasContainer.style.height = `${drawCanvas.height}px`;
+    const selectCanvas = document.getElementById('selectCanvas');
 
 
     let playing = false;
-    const flipbookManager = new FlipbookManager('drawCanvas', 'onionSkinCanvas');
+    const flipbookManager = new FlipbookManager('drawCanvas', 'onionSkinCanvas', 'selectCanvas');
     const playbackManager = new PlaybackManager(flipbookManager);
 
     // main animation callback
@@ -24,7 +19,7 @@ document.addEventListener('DOMContentLoaded', () => {
             animationManager.setTickRate(1000 / 10); // 10 fps for flipbook playback
         }
         else if (flipbookManager.currFrame.isDrawing) {
-            // draw while paused
+            flipbookManager.selection = flipbookManager.currFrame.selection;
             animationManager.setTickRate(1000 / 60); // 60 fps for drawing
         }
     });
@@ -53,6 +48,33 @@ document.addEventListener('DOMContentLoaded', () => {
         // shift key
         if (event.key === 'Shift') {
             flipbookManager.shiftModifier = true;
+        }
+
+        // backspace key
+        if (event.key === 'Backspace') {
+            if (flipbookManager.mouseTracker.withinCanvas) { // if mouse is within canvas
+                if (flipbookManager.currFrame.selection['active'] == true) {
+                    flipbookManager.deleteSelection();
+                }
+            }
+        }
+
+        // escape key
+        if (event.key === 'Escape') {
+            flipbookManager.deselect();
+        }
+
+        // copy, cut, paste
+        if ((event.ctrlKey || event.metaKey) && event.key === 'c') {
+            flipbookManager.copySelection();
+        }
+
+        if ((event.ctrlKey || event.metaKey) && event.key === 'x') {
+            flipbookManager.cutSelection();
+        }
+
+        if ((event.ctrlKey || event.metaKey) && event.key === 'v') {
+            flipbookManager.pasteSelection();
         }
 
         const isUndo = (event.ctrlKey || event.metaKey) && event.key === 'z';

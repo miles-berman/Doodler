@@ -5,7 +5,7 @@ class PlaybackManager {
 
     // next frame playback
     playNextFrame() {
-        this.flipbookManager.currFrame.stopDrawing();  // draw while playing
+        // this.flipbookManager.currFrame.stopDrawing();  // draw while playing
 
         this.flipbookManager.frameIndex++;
 

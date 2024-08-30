@@ -2,7 +2,7 @@ import MouseTracker from './mouseTracker.js';
 import FrameManager from './frameManager.js';
 
 export default class FlipbookManager {
-    constructor(canvasId, onionCanvasId) {
+    constructor(canvasId, onionCanvasId, selectCanvasId) {
         // drawing canvas
         this.canvasElement = document.getElementById(canvasId);
         this.context = this.canvasElement.getContext('2d', { willReadFrequently: true });
@@ -10,6 +10,10 @@ export default class FlipbookManager {
         // onion skinning canvas
         this.onionCanvasElement = document.getElementById(onionCanvasId);
         this.onionContext = this.onionCanvasElement.getContext('2d', { willReadFrequently: false });
+
+        // selection canvas
+        this.selectCanvasElement = document.getElementById(selectCanvasId);
+        this.selectContext = this.selectCanvasElement.getContext('2d', { willReadFrequently: false });
 
         this.frames = [];  // holds all frames
         this.frameIndex = 0;
@@ -22,6 +26,9 @@ export default class FlipbookManager {
         this.onionPercent = 0.5;  // onion skin opacity
 
         this.shiftModifier = false;  // shift key modifier
+
+        this.selection = { active: false, x: 0, y: 0, width: 0, height: 0 };  // selection object
+        this.clipboard = null;  // clipboard for cut/copy/paste
 
         this.initFrames();  // 1st frame initialization
         this.initMouseTracker();  // init mouse tracker for drawing
@@ -121,7 +128,7 @@ export default class FlipbookManager {
 
     // init 1st frame
     initFrames() {
-        const initialFrameManager = new FrameManager(this.canvasElement.id);
+        const initialFrameManager = new FrameManager(this.canvasElement.id, this.selectCanvasElement.id);
         this.frames.push(initialFrameManager);
         this.currFrame = this.frames[this.frameIndex];
         // set default color & line width
@@ -135,13 +142,11 @@ export default class FlipbookManager {
             if (drawing) {
                 if (!this.currFrame.isDrawing) {
                     this.currFrame.startDrawing(x, y, this.shiftModifier);
-                    console.log('start drawing');
                 } else {
                     this.currFrame.draw(x, y, this.shiftModifier);
                 }
             } else {
                 this.currFrame.stopDrawing();
-                console.log('stop drawing');
             }
         });
     }
@@ -161,6 +166,29 @@ export default class FlipbookManager {
         }
     }
 
+    deselect() {
+        this.currFrame.deselect();
+    }
+
+    deleteSelection() {
+        this.currFrame.deleteSelection();
+    }
+
+    copySelection() {
+        this.clipboard = this.currFrame.copySelection();
+    }
+
+    cutSelection() {
+        this.clipboard = this.currFrame.copySelection();
+        this.currFrame.deleteSelection();
+    }
+
+    pasteSelection() {
+        if (this.clipboard) {
+            this.currFrame.pasteSelection(this.clipboard, this.mouseTracker.mouseX, this.mouseTracker.mouseY);
+        }
+    }
+
 
     // frame navigation
     nextFrame() {
@@ -172,6 +200,7 @@ export default class FlipbookManager {
             this.createNewFrame();
         }
         // restore state and set color & line width
+        this.currFrame.selection = this.selection;
         this.currFrame.restoreCurrentState(this.lineWidth, this.color);
         this.updateFrameText();
         this.drawOnionSkin();
@@ -182,6 +211,7 @@ export default class FlipbookManager {
             this.frameIndex--;
             this.currFrame = this.frames[this.frameIndex];
             // restore state and set color & line width
+            this.currFrame.selection = this.selection;
             this.currFrame.restoreCurrentState(this.lineWidth, this.color);
             this.updateFrameText();
             this.drawOnionSkin();
@@ -189,7 +219,7 @@ export default class FlipbookManager {
     }
 
     createNewFrame() {
-        const newFrameManager = new FrameManager(this.canvasElement.id);
+        const newFrameManager = new FrameManager(this.canvasElement.id, this.selectCanvasElement.id);
         this.frames.push(newFrameManager);
         this.frameIndex++;
         this.currFrame = this.frames[this.frameIndex];

@@ -6,6 +6,7 @@ class MouseTracker {
         this.mouseY = 0;
         this.drawing = false; // if currently drawing
         this.isMouseDown = false; // if the mouse button is pressed
+        this.withinCanvas = false; // if the mouse is within the canvas
         this.initMouseEvents();
 
         this.lastMoveTime = 0;
@@ -56,6 +57,7 @@ class MouseTracker {
     }
 
     handleMouseLeave() {
+        this.withinCanvas = false;
         // still drawing if the mouse button is pressed
         if (this.isMouseDown) {
             this.drawing = true; // continue drawing even outside the canvas
@@ -65,6 +67,7 @@ class MouseTracker {
     }
 
     handleMouseEnter(event) {
+        this.withinCanvas = true;
         // reset drawing state on re-enter
         this.updateMousePosition(event); // update position immediately on enter
         if (this.isMouseDown) {
