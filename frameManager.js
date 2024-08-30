@@ -22,7 +22,6 @@ class FrameManager {
             CIRCLE: this.circleCallback.bind(this)
         };
         this.currTool = this.tools.PEN; // default tool
-        this.modifierStack = []; // stack for shift key modifier
 
         this.setupCanvas();
     }
@@ -43,14 +42,7 @@ class FrameManager {
         this.withinCanvas = true;
         [this.lastX, this.lastY] = [x, y];
 
-        // shift key is always line tool (for example)
-        if (shiftModifier) {
-            this.modifierStack.push(this.currTool);
-            this.currTool = this.tools.LINE;
-        }
-        else if (this.modifierStack.length > 0) {
-            this.currTool = this.modifierStack.pop();
-        }
+        this.shiftModifier = shiftModifier;
     }
 
     stopDrawing() {
@@ -68,6 +60,12 @@ class FrameManager {
 
     penCallback(x, y) {
         if (!this.isDrawing) return;
+
+        // line tool if shift key is pressed
+        if (this.shiftModifier) {
+            this.lineCallback(x, y);
+            return;
+        }
 
         // if outside the canvas (with some padding), stop drawing action but keep the state active
         const padding = -15;
@@ -173,7 +171,12 @@ class FrameManager {
 
         const width = x - this.lastX;
         const height = y - this.lastY;
-        this.context.strokeRect(this.lastX, this.lastY, width, height);
+
+        if (this.shiftModifier) {
+            this.context.fillRect(this.lastX, this.lastY, width, height); // Filled square
+        } else {
+            this.context.strokeRect(this.lastX, this.lastY, width, height); // Outline square
+        }
     }
 
     // draws a circle from the last position to the current position (can be an ellipse)
@@ -200,7 +203,13 @@ class FrameManager {
         const radius = Math.sqrt((x - this.lastX) ** 2 + (y - this.lastY) ** 2);
         this.context.beginPath();
         this.context.arc(this.lastX, this.lastY, radius, 0, 2 * Math.PI);
-        this.context.stroke();
+
+        if (this.shiftModifier) {
+            this.context.fill();
+        }
+        else {
+            this.context.stroke();
+        }
         this.context.closePath();
     }
         
