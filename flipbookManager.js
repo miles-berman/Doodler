@@ -21,6 +21,8 @@ export default class FlipbookManager {
         this.showOnionSkin = true;  // onion skinning toggle
         this.onionPercent = 0.5;  // onion skin opacity
 
+        this.shiftModifier = false;  // shift key modifier
+
         this.initFrames();  // 1st frame initialization
         this.initMouseTracker();  // init mouse tracker for drawing
         this.initUI();  // init UI elements
@@ -132,10 +134,10 @@ export default class FlipbookManager {
         this.mouseTracker = new MouseTracker(this.canvasElement, (x, y, drawing) => {
             if (drawing) {
                 if (!this.currFrame.isDrawing) {
-                    this.currFrame.startDrawing(x, y);
+                    this.currFrame.startDrawing(x, y, this.shiftModifier);
                     console.log('start drawing');
                 } else {
-                    this.currFrame.draw(x, y);
+                    this.currFrame.draw(x, y, this.shiftModifier);
                 }
             } else {
                 this.currFrame.stopDrawing();

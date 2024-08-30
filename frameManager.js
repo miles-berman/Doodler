@@ -22,6 +22,7 @@ class FrameManager {
             CIRCLE: this.circleCallback.bind(this)
         };
         this.currTool = this.tools.PEN; // default tool
+        this.modifierStack = []; // stack for shift key modifier
 
         this.setupCanvas();
     }
@@ -33,7 +34,7 @@ class FrameManager {
         this.context.lineCap = 'round';
     }
 
-    startDrawing(x, y) {
+    startDrawing(x, y, shiftModifier) {
         if (this.undoStack.length === 0) {
             this.saveState(); // save the initial state
         }
@@ -41,6 +42,15 @@ class FrameManager {
         this.isDrawing = true;
         this.withinCanvas = true;
         [this.lastX, this.lastY] = [x, y];
+
+        // shift key is always line tool (for example)
+        if (shiftModifier) {
+            this.modifierStack.push(this.currTool);
+            this.currTool = this.tools.LINE;
+        }
+        else if (this.modifierStack.length > 0) {
+            this.currTool = this.modifierStack.pop();
+        }
     }
 
     stopDrawing() {
@@ -48,8 +58,7 @@ class FrameManager {
         this.saveState();
     }
 
-    draw (x, y) {
-        console.log(this.currTool);
+    draw (x, y, shiftModifier) {
         this.currTool(x, y);
     }
 

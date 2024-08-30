@@ -50,6 +50,11 @@ document.addEventListener('DOMContentLoaded', () => {
             flipbookManager.stop();
         }
 
+        // shift key
+        if (event.key === 'Shift') {
+            flipbookManager.shiftModifier = true;
+        }
+
         const isUndo = (event.ctrlKey || event.metaKey) && event.key === 'z';
         const isRedo = isUndo && event.shiftKey;
 
@@ -59,6 +64,12 @@ document.addEventListener('DOMContentLoaded', () => {
         } else if (isUndo) {
             event.preventDefault();
             flipbookManager.undo();
+        }
+    });
+
+    document.addEventListener('keyup', (event) => {
+        if (event.key === 'Shift') {
+            flipbookManager.shiftModifier = false;
         }
     });
 });
